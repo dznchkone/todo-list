@@ -1,10 +1,12 @@
+import React, { useState, useEffect } from "react";
 import { Fab, Stack, TextField } from "@mui/material";
 import Container from "@mui/material/Container";
-import React, { useState, useEffect } from "react";
 import Record from "./Components/Record";
 import { IRecord } from "./interfaces";
 import SearchAppBar from "./Components/SearchAppBar";
 import AddIcon from "@mui/icons-material/Add";
+import useLocalStorage from "./hooks/useLocalStorage";
+
 
 const testData: IRecord[] = [
   {
@@ -25,18 +27,30 @@ const testData: IRecord[] = [
 ];
 
 const App = () => {
-  const [records, setRecords] = useState<IRecord[]>([]);
+  const [records, setRecords] = useLocalStorage<IRecord[] | []>("records", []);
   const [textValue, setTextValue] = useState<string>("");
 
-  useEffect(() => {
-    setRecords(testData);
-  }, []);
+  
 
-  const addNewTask = (data: IRecord) => {
+  // useEffect(() => {
+  //   setRecords(testData);
+  // }, []);
+
+  const addNewRecord = (data: IRecord):void => {
     setRecords((prev: IRecord[]) => {
       return [...prev, data];
     });
   };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>):void=>{
+    setTextValue(event.target.value);
+  }
+
+const handleDelete = (id:number):void=>{
+    setRecords((prev:IRecord[])=>{
+      return [...prev.filter(item=>item.id !== id)]
+    })
+}
 
   return (
     <>
@@ -48,13 +62,13 @@ const App = () => {
             fullWidth
             variant={"standard"}
             value={textValue}
-            onChange={(event): void => setTextValue(event.target.value)}
+            onChange={handleChange}
           />
           <Fab
             color="primary"
             aria-label="add"
             onClick={() => {
-              addNewTask({
+              addNewRecord({
                 id: records.length,
                 text: textValue,
                 isDone: false,
@@ -72,7 +86,7 @@ const App = () => {
           spacing={2}
         >
           {records.map((record: IRecord, index: number) => {
-            return <Record key={index} data={record} />;
+            return <Record key={index} data={record} onDelete={handleDelete}/>;
           })}
         </Stack>
       </Container>
