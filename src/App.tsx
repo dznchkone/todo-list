@@ -7,34 +7,10 @@ import SearchAppBar from "./Components/SearchAppBar";
 import AddIcon from "@mui/icons-material/Add";
 import useLocalStorage from "./hooks/useLocalStorage";
 
-
-const testData: IRecord[] = [
-  {
-    id: 1,
-    text: "one",
-    isDone: false,
-  },
-  {
-    id: 2,
-    text: "two",
-    isDone: false,
-  },
-  {
-    id: 3,
-    text: "three",
-    isDone: false,
-  },
-];
-
 const App = () => {
   const [records, setRecords] = useLocalStorage<IRecord[] | []>("records", []);
   const [textValue, setTextValue] = useState<string>("");
 
-  
-
-  // useEffect(() => {
-  //   setRecords(testData);
-  // }, []);
 
   const addNewRecord = (data: IRecord):void => {
     setRecords((prev: IRecord[]) => {
