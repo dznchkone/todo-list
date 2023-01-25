@@ -1,5 +1,5 @@
 import React, { useState} from "react";
-import { Fab, Stack, TextField } from "@mui/material";
+import { Fab, Paper, Stack, TextField } from "@mui/material";
 import Container from "@mui/material/Container";
 import Record from "./Components/Record";
 import { IRecord } from "./interfaces";
@@ -13,13 +13,13 @@ const App = () => {
 
 
   const addNewRecord = (data: IRecord):void => {
-    setRecords((prev: IRecord[]) => {
+    if (data.text.length > 0) setRecords((prev: IRecord[]) => {
       return [...prev, data];
     });
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>):void=>{
-    setTextValue(event.target.value);
+    if  (event.target.value.length < 255) setTextValue(event.target.value);
   }
 
 const handleDelete = (id:number):void=>{
@@ -32,9 +32,9 @@ const handleDelete = (id:number):void=>{
     <>
       <SearchAppBar />
       <Container fixed>
-        <Stack direction={"row"} spacing={1} sx={{ p: 1, mb: 2 }}>
+        <Stack component={Paper} direction={"row"} spacing={1} sx={{ p: 1, mb: 2 }}>
           <TextField
-            label={"ToDo text"}
+            label={"Добавить новый элемент..."}
             fullWidth
             variant={"standard"}
             value={textValue}
@@ -42,6 +42,7 @@ const handleDelete = (id:number):void=>{
           />
           <Fab
             color="primary"
+            size="small"
             aria-label="add"
             onClick={() => {
               addNewRecord({

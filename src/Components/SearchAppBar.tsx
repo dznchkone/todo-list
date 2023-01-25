@@ -52,9 +52,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function SearchAppBar() {
+const handleChange = (event: React.ChangeEvent<HTMLInputElement>)=>{
+}
+
   return (
     <Box sx={{ flexGrow: 1 , mb: 2}}>
-      <AppBar position="static">
+      <AppBar position={"fixed"}>
         <Toolbar>
           <IconButton
             size="large"
@@ -71,19 +74,21 @@ export default function SearchAppBar() {
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
           >
-            MUI
+            Список дел
           </Typography>
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
-              placeholder="Search…"
+              placeholder="Поиск…"
               inputProps={{ 'aria-label': 'search' }}
+              onChange={handleChange}
             />
           </Search>
         </Toolbar>
       </AppBar>
+      <Toolbar></Toolbar>
     </Box>
   );
 }
