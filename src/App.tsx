@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Fab, Paper, Stack, TextField } from "@mui/material";
 import Container from "@mui/material/Container";
 import Record from "./Components/Record";
@@ -17,6 +17,10 @@ const App: FC = () => {
   const [textValue, setTextValue] = useState<string>("");
   const [searchText, setSearchText] = useState<string>("");
   const [filter, setFilter] = useState<Filter>("")
+
+  useEffect(()=>{
+    document.title = "Список дел"
+  },[])
 
   const addNewRecord = (): void => {
     if (textValue.length > 0) {
