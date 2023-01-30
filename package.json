@@ -29,6 +29,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
+  "homepage": "https://dznchkone.github.io/todo-list/",
   "eslintConfig": {
     "extends": [
       "react-app",
