@@ -1,5 +1,5 @@
 import React from "react";
-import { Checkbox, Divider, Typography, IconButton, Box, Paper} from "@mui/material";
+import { Checkbox, Divider, Typography, IconButton, Box, Paper, Stack} from "@mui/material";
 import { IRecord } from "../interfaces";
 import {Delete as DeleteIcon} from "@mui/icons-material"
 
@@ -18,7 +18,7 @@ function Record(props: IRecordProps): JSX.Element {
   }
 
   return (
-    <Box component={Paper} flexDirection={"row"} display={"flex"} maxHeight={42}>
+    <Box component={Paper} flexDirection={"row"} display={"flex"}>
       <Checkbox checked={data.isDone} onChange={handleChange}/>
       <Divider orientation="vertical" variant="middle" flexItem/>
       <Typography variant="body1" padding={1} sx={{
@@ -26,9 +26,12 @@ function Record(props: IRecordProps): JSX.Element {
       }}>
         {data.text}
       </Typography>
-      <IconButton sx={{ml: "auto"}} aria-label="delete" onClick={()=>{onDelete(data.id)}}>
+      <Stack direction={"row"} sx={{ml: "auto"}} maxHeight={42}>
+      <IconButton  aria-label="delete" onClick={()=>{onDelete(data.id)}}>
         <DeleteIcon/>
       </IconButton>
+      </Stack>
+      
     </Box>
   );
 }

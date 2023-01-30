@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import { Fab, Paper, Stack, TextField } from "@mui/material";
 import Container from "@mui/material/Container";
 import Record from "./Components/Record";
@@ -7,25 +7,34 @@ import SearchAppBar from "./Components/SearchAppBar";
 import AddIcon from "@mui/icons-material/Add";
 import useLocalStorage from "./hooks/useLocalStorage";
 
-const App = () => {
-  const [records, setRecords] = useLocalStorage<IRecord[] | []>("records", []);
+export type Filter = "" | "done" | "not-done";
+
+const App: FC = () => {
+  const [storedRecords, setStoredRecords] = useLocalStorage<IRecord[] | []>(
+    "records",
+    []
+  );
   const [textValue, setTextValue] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>("");
+  const [filter, setFilter] = useState<Filter>("")
 
   const addNewRecord = (): void => {
     if (textValue.length > 0) {
       const data: IRecord = {
-        id: records.length,
+        id: storedRecords.length,
         text: textValue,
         isDone: false,
       };
-      setRecords((prev: IRecord[]) => {
+      setStoredRecords((prev: IRecord[]) => {
         return [...prev, data];
       });
       setTextValue("");
     }
   };
 
-  const handleTextFieldKeyDown = (e: React.KeyboardEvent<HTMLInputElement>):void => {
+  const handleTextFieldKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>
+  ): void => {
     switch (e.key) {
       case "Enter":
         addNewRecord();
@@ -33,36 +42,77 @@ const App = () => {
       case "Escape":
         setTextValue("");
         break;
-    
+
       default:
         break;
     }
   };
 
-  const handleTextFieldChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleTextFieldChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     if (event.target.value.length < 256) setTextValue(event.target.value);
   };
 
-  const handleCheckRecord = (id: number, checked: boolean):void=>{
-    setRecords((prev: IRecord[])=>{
-      const temp = [...prev.map(item=>{
-        if (item.id === id) item.isDone = checked
-        return item
-      })];
+  const handleCheckRecord = (id: number, checked: boolean): void => {
+    setStoredRecords((prev: IRecord[]) => {
+      const temp = [
+        ...prev.map((item) => {
+          if (item.id === id) item.isDone = checked;
+          return item;
+        }),
+      ];
 
-      return temp
-    })
-  }
+      return temp;
+    });
+  };
 
   const handleDelete = (id: number): void => {
-    setRecords((prev: IRecord[]) => {
+    setStoredRecords((prev: IRecord[]) => {
       return [...prev.filter((item) => item.id !== id)];
+    });
+  };
+
+  const handleSearch = (inputText: string): void => {
+    setSearchText(inputText);
+  };
+
+  const handleFilter = (filter:Filter):void=>{
+    setFilter(filter);
+  }
+
+  const buildRecordsList = (): JSX.Element[] => {
+    let temp = [...storedRecords];
+
+    switch (filter) {
+      case "done":
+        temp = temp.filter((item) => item.isDone);
+        break;
+      case "not-done":
+        temp = temp.filter((item) => !item.isDone);
+        break;
+      default:
+        break;
+    }
+
+    if (searchText)
+      temp = temp.filter((item) => item.text.includes(searchText));
+
+    return temp.map((record: IRecord, index: number) => {
+      return (
+        <Record
+          key={index}
+          data={record}
+          onDelete={handleDelete}
+          onCheck={handleCheckRecord}
+        />
+      );
     });
   };
 
   return (
     <>
-      <SearchAppBar />
+      <SearchAppBar onSearch={handleSearch} onFilter={handleFilter}/>
       <Container fixed>
         <Stack
           component={Paper}
@@ -83,10 +133,9 @@ const App = () => {
             size="small"
             aria-label="add"
             sx={{
-              minWidth: '40px'
+              minWidth: "40px",
             }}
             onClick={addNewRecord}
-            
           >
             <AddIcon />
           </Fab>
@@ -97,9 +146,7 @@ const App = () => {
           alignItems="stretch"
           spacing={2}
         >
-          {records.map((record: IRecord, index: number) => {
-            return <Record key={index} data={record} onDelete={handleDelete} onCheck={handleCheckRecord}/>;
-          })}
+          {buildRecordsList()}
         </Stack>
       </Container>
     </>

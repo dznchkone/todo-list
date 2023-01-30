@@ -9,6 +9,13 @@ import InputBase from "@mui/material/InputBase";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import { Menu, MenuItem } from "@mui/material";
+import { Filter } from "../App";
+
+
+interface SearchAppBarProps {
+  onSearch: Function
+  onFilter: (filter:Filter)=>void
+}
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -52,18 +59,29 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function SearchAppBar() {
+export default function SearchAppBar(props: SearchAppBarProps) {
+
+  const {onSearch,onFilter} = props;
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {};
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onSearch(event.target.value);
+  };
+
+  const handleFilterMenu = (event:any) => {
+    onFilter(event.target.ariaLabel || "")
+    handleClose();
+  }
 
   return (
     <Box sx={{ flexGrow: 1, mb: 2 }}>
@@ -92,9 +110,9 @@ export default function SearchAppBar() {
               "aria-labelledby": "menu-icon-button",
             }}
           >
-            <MenuItem onClick={handleClose}>Profile</MenuItem>
-            <MenuItem onClick={handleClose}>My account</MenuItem>
-            <MenuItem onClick={handleClose}>Logout</MenuItem>
+            <MenuItem aria-label="" onClick={handleFilterMenu}>Весь список дел</MenuItem>
+            <MenuItem aria-label="done" onClick={handleFilterMenu}>Завершенные</MenuItem>
+            <MenuItem aria-label="not-done" onClick={handleFilterMenu}>Не завершенные</MenuItem>
           </Menu>
           <Typography
             variant="h6"
