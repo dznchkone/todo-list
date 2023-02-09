@@ -1,13 +1,13 @@
 import React, { FC, useEffect, useState } from "react";
-import { Box, Drawer, Fab, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Stack, TextField, Toolbar } from "@mui/material";
+import { Box, Fab, Paper, Stack, TextField, Toolbar } from "@mui/material";
 import Container from "@mui/material/Container";
 import Record from "./Components/Record";
 import { IRecord } from "./interfaces";
 import SearchAppBar from "./Components/SearchAppBar";
 import AddIcon from "@mui/icons-material/Add";
 import useLocalStorage from "./hooks/useLocalStorage";
+import { SideMenu } from "./Components/SideMenu";
 
-import InboxIcon from "@mui/icons-material/Inbox";
 
 // export type Filter = "" | "done" | "not-done";
 
@@ -25,7 +25,8 @@ const App: FC = () => {
   const [textValue, setTextValue] = useState<string>("");
   const [searchText, setSearchText] = useState<string>("");
   const [filter, setFilter] = useState<Filter>(Filter.ALL);
-  const [open, setOpen] = useState<boolean>(false);
+  const [openSideMenu, setOpenSideMenu] = useState<boolean>(false);
+  
 
   useEffect(()=>{
     document.title = "Список дел"
@@ -90,10 +91,6 @@ const App: FC = () => {
     setSearchText(inputText);
   };
 
-  const handleFilter = (filter:Filter):void=>{
-    setFilter(filter);
-    setOpen(false);
-  }
 
   const buildRecordsList = (): JSX.Element[] => {
     let temp = [...storedRecords];
@@ -124,61 +121,12 @@ const App: FC = () => {
     });
   };
 
-  const drawerWidth = 240;
+  
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <SearchAppBar onSearch={handleSearch} onFilter={handleFilter} onClickMenuIcon={setOpen}/>
-      <Drawer
-        anchor="left"
-        open={open}
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
-        }}
-      >
-        <Toolbar />
-        <Box sx={{ overflow: 'auto' }}>
-          <List>
-            {/* {['Все', 'Выполненные', 'Не выполненные', 'Просроченные'].map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton onClick={()=>handleFilter(Filter.ALL)}>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItemButton>
-              </ListItem>
-            ))} */}
-            <ListItem key={'Все'} disablePadding>
-                <ListItemButton onClick={()=>handleFilter(Filter.ALL)}>
-                  <ListItemIcon>
-                     <InboxIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={'Все'} />
-                </ListItemButton>
-              </ListItem>
-              <ListItem key={'Выполненные'} disablePadding>
-                <ListItemButton onClick={()=>handleFilter(Filter.DONE)}>
-                  <ListItemIcon>
-                     <InboxIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={'Выполненные'} />
-                </ListItemButton>
-              </ListItem>
-              <ListItem key={'Не выполненные'} disablePadding>
-                <ListItemButton onClick={()=>handleFilter(Filter.NOT_DONE)}>
-                  <ListItemIcon>
-                     <InboxIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={'Не выполненные'} />
-                </ListItemButton>
-              </ListItem>
-          </List>
-          
-        </Box>
-      </Drawer>
+      <SearchAppBar onSearch={handleSearch} onClickMenuIcon={setOpenSideMenu}/>
+      <SideMenu open={openSideMenu} onClickMenuItem={setFilter} onClose={setOpenSideMenu}/>
       <Box component={Container} sx={{ flexGrow: 1, p: 3 }}>
       <Toolbar />
         <Stack

@@ -7,12 +7,11 @@ import Typography from "@mui/material/Typography";
 import InputBase from "@mui/material/InputBase";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import { Filter } from "../App";
+
 
 
 interface SearchAppBarProps {
   onSearch: Function
-  onFilter: (filter:Filter)=>void
   onClickMenuIcon: Function
 }
 
